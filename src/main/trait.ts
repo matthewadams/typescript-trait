@@ -10,8 +10,6 @@ type MergeClassTypes<T extends Array<Class<any>>> = UnionToIntersection<ClassIns
 
 export default function traits<T extends Array<Class<any>>> (constructors: T): Constructor<MergeClassTypes<T>> {
   const cls = class {
-    state = {}
-
     constructor () {
       constructors.forEach((c: any) => {
         Reflect.construct(c, [], this)
