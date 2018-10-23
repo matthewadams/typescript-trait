@@ -29,8 +29,7 @@ describe('traits', () => {
       get another () { return 'another from AnotherTrait' }
       get more () { return this._more }
       set more (value: string) {
-        this.checkMore(value)
-        this._more = value
+        this._more = this.checkMore(value)
       }
       abstract checkMore (value: string): string
     }
