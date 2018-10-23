@@ -22,7 +22,7 @@
   "scripts": {
     "build": "run-s transpile test",
     "transpile": "tsc",
-    "unit": "nyc -x 'lib/test' mocha --opts mocha.opts 'lib/test/**/*.spec.js'",
+    "unit": "mocha --opts mocha.opts 'lib/test/**/*.spec.js'",
     "u": "mocha --require ts-node/register 'src/test/**/*.spec.ts'",
     "test": "run-s unit lint",
     "lint": "tslint 'src/**/*.ts'"
