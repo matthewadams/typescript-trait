@@ -2,7 +2,7 @@ type Constructor<T = {}> = new (...args: any[]) => T
 
 type Class<T> = Function & { prototype: T }
 
-type ClassInstanceType<T> = T extends new (...args: any[]) => infer R  ? R  : T extends { prototype: infer R } ? R : any;
+type ClassInstanceType<T> = T extends new (...args: any[]) => infer R ? R : T extends { prototype: infer R } ? R : any
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
 
