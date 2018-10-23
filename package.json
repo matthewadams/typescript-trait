@@ -1,27 +1,35 @@
 {
-  "name": "traitjacket",
-  "version": "1.0.0-pre.10",
-  "description": "A simple, powerful trait applier for TypeScript classes",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
+  "name": "typescript-traits",
+  "version": "1.0.0-pre.0",
+  "description": "A trait applier for TypeScript classes",
+  "main": "lib/main/index.js",
+  "engines": {
+    "node": ">=8.12.0"
   },
-  "dependencies": {},
   "devDependencies": {
-    "chai": "4.1.2",
+    "@types/chai": "4.1.6",
+    "@types/mocha": "5.2.5",
+    "@types/node": "10.11.7",
+    "chai": "4.2.0",
+    "dirty-chai": "2.0.1",
     "mocha": "5.2.0",
-    "standard": "12.0.1",
-    "typescript": "3.1.3"
+    "npm-run-all": "4.1.3",
+    "ts-node": "7.0.1",
+    "tslint": "5.11.0",
+    "tslint-config-standard": "8.0.1",
+    "typescript": "3.1.1"
   },
   "scripts": {
-    "test-only": "mocha -u tdd test",
-    "test": "npm run test-only",
-    "posttest": "npm run lint",
-    "lint": "standard --verbose"
+    "build": "run-s transpile test",
+    "transpile": "tsc",
+    "unit": "nyc -x 'lib/test' mocha --opts mocha.opts 'lib/test/**/*.spec.js'",
+    "u": "mocha --require ts-node/register 'src/test/**/*.spec.ts'",
+    "test": "run-s unit lint",
+    "lint": "tslint 'src/**/*.ts'"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/scispike/traitjacket"
+    "url": "https://github.com/scispike/typescript-traits"
   },
   "keywords": [
     "trait",
@@ -30,9 +38,6 @@
     "mixins",
     "classes"
   ],
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/scispike/traitjacket/issues"
-  },
-  "homepage": "https://github.com/scispike/traitjacket#readme"
+  "license": "MIT",
+  "dependencies": {}
 }
