@@ -2,23 +2,21 @@ import { expect } from 'chai'
 
 describe('subclass factory', () => {
   it('should work', () => {
+    const name = 'I am a Nameable!'
+
     interface INameable {
       name?: string
     }
 
     type Constructable = new (...args: any[]) => any
 
-    // type InferrableConstructable<I> = new (...args: infer A) => infer T ? new (...args: A) => T & I : never
-
-    const name = 'I am a Nameable!'
-
-    function subclassOf<I, C extends Constructable> (superclass: C):
+    function nameableSubclassOf<C extends Constructable> (superclass: C):
       C extends new (...args: infer A) => infer T
-        ? new (...args: A) => T & I
+        ? new (...args: A) => T & INameable
         : never
 
-    function subclassOf<I> (superclass: new (...args: any[]) => any): new (...args: any[]) => I {
-      return class extends superclass implements I {
+    function nameableSubclassOf (superclass: Constructable): new (...args: any[]) => INameable {
+      return class extends superclass implements INameable {
         name?: string = name
       }
     }
@@ -27,7 +25,7 @@ describe('subclass factory', () => {
       bar?: string
     }
 
-    const NameableFoo = subclassOf(Foo)
+    const NameableFoo = nameableSubclassOf(Foo)
     const nameableFoo = new NameableFoo()
     nameableFoo.bar = 'bar'
 
@@ -35,6 +33,6 @@ describe('subclass factory', () => {
     expect(nameableFoo.name).to.be.ok
     expect(nameableFoo.name).to.equal(name)
     expect(nameableFoo.bar).to.equal('bar')
-    // bonus: expect(nameableFoo).to.be.instanceOf(INameable)
+    // expect(nameableFoo).to.be.instanceOf(INameable)
   })
 })
