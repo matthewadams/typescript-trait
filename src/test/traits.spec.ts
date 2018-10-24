@@ -8,7 +8,7 @@ describe('traits', () => {
       name?: string
     }
 
-    const Nameable = <S>(superclass: Constructor<S>) => class extends superclass implements INameable {
+    const Nameable: Trait<INameable,S> = <S>(superclass: Constructor<S>) => class extends superclass implements INameable {
       name?: string
     }
 
