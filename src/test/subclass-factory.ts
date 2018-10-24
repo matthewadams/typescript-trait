@@ -12,13 +12,13 @@ describe('subclass factory', () => {
 
     const name = 'I am a Nameable!'
 
-    function nameableSubclassOf<C extends Constructable> (superclass: C):
+    function subclassOf<I, C extends Constructable> (superclass: C):
       C extends new (...args: infer A) => infer T
-        ? new (...args: A) => T & INameable
+        ? new (...args: A) => T & I
         : never
 
-    function nameableSubclassOf (superclass: new (...args: any[]) => any): new (...args: any[]) => INameable {
-      return class extends superclass implements INameable {
+    function subclassOf<I> (superclass: new (...args: any[]) => any): new (...args: any[]) => I {
+      return class extends superclass implements I {
         name?: string = name
       }
     }
@@ -27,7 +27,7 @@ describe('subclass factory', () => {
       bar?: string
     }
 
-    const NameableFoo = nameableSubclassOf(Foo)
+    const NameableFoo = subclassOf(Foo)
     const nameableFoo = new NameableFoo()
     nameableFoo.bar = 'bar'
 
@@ -35,6 +35,6 @@ describe('subclass factory', () => {
     expect(nameableFoo.name).to.be.ok
     expect(nameableFoo.name).to.equal(name)
     expect(nameableFoo.bar).to.equal('bar')
-    // expect(nameableFoo).to.be.instanceOf(INameable)
+    // bonus: expect(nameableFoo).to.be.instanceOf(INameable)
   })
 })
