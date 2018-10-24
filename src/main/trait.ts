@@ -12,12 +12,25 @@ export default function traits<T extends Array<Class<any>>> (constructors: T): C
   const cls = class {
     constructor () {
       constructors.forEach((c: any) => {
-        Reflect.construct(c, [], this)
+        const tmp = Reflect.construct(c, [], new.target)
+        let keys: string[] = []
+        for (let key of Object.keys(tmp)) {
+          const desc = Object.getOwnPropertyDescriptor(tmp, key)
+          if (desc !== undefined) {
+            Object.defineProperty(this, key, desc)
+          }
+          keys.push(key)
+        }
       })
     }
   }
   constructors.forEach((c: any) => {
-    Object.assign(cls.prototype, c.prototype)
+    for (let key of Object.keys(c.prototype)) {
+      const desc = Object.getOwnPropertyDescriptor(c.prototype, key)
+      if (desc !== undefined) {
+        Object.defineProperty(cls.prototype, key, desc)
+      }
+    }
   })
   return cls as any
 }
