@@ -1,8 +1,27 @@
 import { expect } from 'chai'
 
-import traits from '../main/trait'
+import { Constructable, Class, Trait, superclass } from '../main/trait'
 
 describe('traits', () => {
+  it('should work', () => {
+    interface INameable {
+      name?: string
+    }
+
+    const Nameable: Trait<INameable> = <S>(superclass: Function) => class extends superclass implements INameable {
+      name?: string
+    }
+
+    class Person extends superclass().expressing(Nameable) {
+      dob?: Date
+    }
+
+    const person = new Person()
+    person.name = 'Bob'
+
+    expect(person.name).to.equal('Bob')
+  })
+
   it('multiple supertraits with correct overrides', () => {
     class /* trait */ Supertrait1 {
       bleep () { return 'bleep from Supertrait1' }
