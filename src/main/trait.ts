@@ -4,22 +4,24 @@
 //
 // type MergeClassTypes<T extends Array<Class<any>>> = UnionToIntersection<ClassInstanceType<T[number]>>
 
-export type Constructor<T = {}> = new (...args: any[]) => T
+export interface Constructable<T> extends Function {
+  new (...args: any[]): T
+}
 
 export type Class<T> = Function & { prototype: T }
 
-export type Trait<T,SUP = {}> = (superclass?: Constructor<SUP>) => Class<T & SUP>
+export type Trait<I,S = {}> = (superclass?: Constructable<S>) => Class<I & S>
 
-export const superclass = <S = any>(s?: Constructor<S>) => new TraitBuilder(s)
+export const superclass = <S = any>(s?: Constructable<S>) => new TraitBuilder(s)
 
 export class TraitBuilder<S = any> {
-  superclass: Constructor<S>
+  superclass: Constructable<S>
 
-  constructor (superclass?: Constructor<S>) {
+  constructor (superclass?: Constructable<S>) {
     this.superclass = superclass || (class {} as any)
   }
 
-  expressing <T,U> (t: Trait<T,U>): Class<T & U> {
+  expressing <T> (t: Trait<T,S>): Class<T & S> {
     return t(this.superclass)
   }
 }

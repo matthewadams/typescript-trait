@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import { Constructor, Class, Trait, superclass } from '../main/trait'
+import { Constructable, Class, Trait, superclass } from '../main/trait'
 
 describe('traits', () => {
   it('should work', () => {
@@ -8,7 +8,7 @@ describe('traits', () => {
       name?: string
     }
 
-    const Nameable: Trait<INameable,S> = <S>(superclass: Constructor<S>) => class extends superclass implements INameable {
+    const Nameable: Trait<INameable> = <S>(superclass: Function) => class extends superclass implements INameable {
       name?: string
     }
 
