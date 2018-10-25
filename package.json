@@ -39,5 +39,7 @@
     "classes"
   ],
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "mutrait": "1.0.0-pre.9"
+  }
 }
