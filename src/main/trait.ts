@@ -233,7 +233,7 @@ export const BareTrait = <A, B extends A>(trait: TraitFunction<A, B>) =>
 export const Trait = <A, B extends A>(trait: TraitFunction<A, B>) => HasInstance(Dedupe(Cached(BareTrait(trait))))
 
 /**
- * A fluent interface to apply a list of traits to a superclass.
+ * A fluent interface to apply multiple traits to a superclass.
  *
  * ```javascript
  * class X extends superclass(Superclass).expressing(A, B, C) {}
@@ -256,12 +256,12 @@ export const superclass = (superclass?: Function) => new TraitBuilder(superclass
 
 /**
  * A convenient syntactical shortcut to handle the case when a class extends
- * no other class, instead of having to call
+ * no other class and a single trait, instead of having to call
  * ```javascript
- * superclass().expressing(M1).express()
+ * superclass().expressing(T1).express()
  * ```
  * which avoids confusion over whether someone should or shouldn't pass a
- * superclass argument and so that it reads more naturally.
+ * superclass argument, the calling of `express()`, and so that it reads more naturally.
  *
  * @param ts {TraitFunction} the trait that should be expressed
  * @returns {Function}
@@ -272,7 +272,7 @@ export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().exp
  * A convenient syntactical shortcut to handle the case when a class extends
  * no other class, yet expresses multiple traits, instead of having to call
  * ```javascript
- * superclass().expressing(M1).express()
+ * superclass().expressing(T1).expressing(T2).express()
  * ```
  * which avoids confusion over whether someone should or shouldn't pass a
  * superclass argument and so that it reads more naturally.
