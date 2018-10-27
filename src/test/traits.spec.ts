@@ -4,7 +4,7 @@ import traits from '../main/trait'
 
 describe('traits', () => {
   it('multiple supertraits with correct overrides', () => {
-    class Supertrait1 {
+    class /* trait */ Supertrait1 {
       bleep () { return 'bleep from Supertrait1' }
       foo () { return 'foo from Supertrait1' }
       bar () { return 'bar from Supertrait1' }
@@ -12,18 +12,18 @@ describe('traits', () => {
       get blargy () { return 'blargy from Supertrait1' }
     }
 
-    class Supertrait2 extends Supertrait1 {
+    class /* trait */ Supertrait2 extends Supertrait1 {
       foo () { return 'foo from Supertrait2' }
       bar () { return 'bar from Supertrait2' }
       snafu () { return 'snafu from Supertrait2' }
     }
 
-    class Subtrait extends Supertrait2 {
+    class /* trait */ Subtrait extends Supertrait2 {
       bar () { return 'bar from Subtrait' }
       snafu () { return 'snafu from Subtrait' }
     }
 
-    abstract class AnotherTrait {
+    abstract class /* trait */ AnotherTrait {
       _more: string = 'more from AnotherTrait'
       get blargy () { return 'blargy from AnotherTrait' }
       get another () { return 'another from AnotherTrait' }
@@ -34,7 +34,7 @@ describe('traits', () => {
       abstract checkMore (value: string): string
     }
 
-    class C extends traits([Subtrait, AnotherTrait]) {
+    class C extends traits([Subtrait, AnotherTrait]) /* expresses Subtrait, AnotherTrait */ {
       snafu () { return 'snafu from C' }
       get another () { return 'another from C' }
       checkMore (value: string): string {
