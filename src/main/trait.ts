@@ -270,7 +270,7 @@ export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().exp
 
 /**
  * A convenient syntactical shortcut to handle the case when a class extends
- * no other class, yes expresses multiple traits, instead of having to call
+ * no other class, yet expresses multiple traits, instead of having to call
  * ```javascript
  * superclass().expressing(M1).express()
  * ```
