@@ -17,11 +17,10 @@ describe('expressionOf', () => {
       snafu () { return 'snafu from Supertrait2' }
     })
 
-    const Subtrait = Trait(s =>
-      class extends superclass(s).expressing(Supertrait1).expressing(Supertrait2).express() {
-        bar () { return 'bar from Subtrait' }
-        snafu () { return 'snafu from Subtrait' }
-      })
+    const Subtrait = Trait(s => class extends superclass(s).expressing(Supertrait1).expressing(Supertrait2).express() {
+      bar () { return 'bar from Subtrait' }
+      snafu () { return 'snafu from Subtrait' }
+    })
 
     const AnotherTrait = Trait(s => class extends s {
       another () { return 'another from AnotherTrait' }
