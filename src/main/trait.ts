@@ -268,6 +268,20 @@ export const superclass = (superclass?: Function) => new TraitBuilder(superclass
  */
 export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().expressing(t).express()
 
+/**
+ * A convenient syntactical shortcut to handle the case when a class extends
+ * no other class, yes expresses multiple traits, instead of having to call
+ * ```javascript
+ * superclass().expressing(M1).express()
+ * ```
+ * which avoids confusion over whether someone should or shouldn't pass a
+ * superclass argument and so that it reads more naturally.
+ *
+ * @param ts {TraitFunction} the trait that should be expressed
+ * @returns {Function}
+ */
+export const expressionOf = <A, B extends A>(t: TraitFunction<A,B>) => superclass().expressing(t)
+
 export class TraitBuilder {
   private cls: Function
 
