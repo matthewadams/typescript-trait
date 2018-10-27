@@ -5,14 +5,12 @@ const _wrappedTrait = Symbol('_wrappedTrait')
 
 const _cachedApplications = Symbol('_cachedApplications')
 
-
 type Constructor<T> = {
   // 'new' can be called on a constructor to produce a T.
   new(...args: any[]): T;
 
   [_cachedApplications]: Map<TraitFunction<any, any>, Constructor<any>>;
 }
-
 
 /**
  * A function that returns an empty or non-empty subclass of its argument.
@@ -83,7 +81,7 @@ export const apply = <T, U extends T>(superclass: Constructor<T>, trait: TraitFu
  * `trait` to a superclass
  */
 export const isTraitificationOf = <T, U extends T>(proto: any, trait: TraitFunction<T, U>) =>
-  proto.hasOwnProperty(_appliedTrait) && proto[_appliedTrait] === unwrap(trait);
+  proto.hasOwnProperty(_appliedTrait) && proto[_appliedTrait] === unwrap(trait)
 
 /**
  * Returns `true` iff `o` has an application of `trait` on its prototype
@@ -119,7 +117,7 @@ export const expresses = <T, U extends T>(it: Object, trait: TraitFunction<T, U>
  * @param {TraitFunction} wrapper A function that wraps {@link trait}
  * @return {TraitFunction} `wrapper`
  */
-export const wrap = <A, B extends A>(trait: TraitFunction<A, B>, wrapper: TraitFunction<A, B>): 
+export const wrap = <A, B extends A>(trait: TraitFunction<A, B>, wrapper: TraitFunction<A, B>):
   TraitFunction<A, B> => {
   Object.setPrototypeOf(wrapper, trait)
   if (!trait[_wrappedTrait]) {
@@ -137,14 +135,13 @@ export const wrap = <A, B extends A>(trait: TraitFunction<A, B>, wrapper: TraitF
  * @param {TraitFunction} wrapper A wrapped trait produced by {@link wrap}
  * @return {TraitFunction} The originally wrapped trait
  */
-export function unwrap<TWrapper extends TraitFunction<any, any>>(wrapper: TWrapper):
+export function unwrap<TWrapper extends TraitFunction<any, any>> (wrapper: TWrapper):
   TWrapper extends WrappedTraitFunction<infer A, infer B, infer C, infer D>
     ? TraitFunction<C, D>
     : TWrapper extends TraitFunction<infer A, infer B>
-      ? TraitFunction<A, B>
-      : never
-{
-  return <any>wrapper[_wrappedTrait] || wrapper
+    ? TraitFunction<A, B>
+    : never {
+  return wrapper[_wrappedTrait] as any || wrapper
 }
 
 /**
@@ -261,38 +258,29 @@ export const superclass = (superclass?: Function) => new TraitBuilder(superclass
  * A convenient syntactical shortcut to handle the case when a class extends
  * no other class, instead of having to call
  * ```javascript
- * superclass().expressing(M1, M2, ...)
+ * superclass().expressing(M1).express()
  * ```
  * which avoids confusion over whether someone should or shouldn't pass a
  * superclass argument and so that it reads more naturally.
  *
- * @param ts {TraitFunction[]} vararg array of traits
+ * @param ts {TraitFunction} the trait that should be expressed
  * @returns {Function}
  */
-//export const traits = (...ts: TraitFunction[]) => superclass().expressing(...ts)
-export const traits = <TArgs extends TraitFunction<any, any>[]>(ts: TArgs) => superclass().expressing(...ts)
-
-/**
- * A convenient singular form of {@link traits} only for readability when expressing a single trait.
- *
- * @see traits
- */
-export const trait = traits
+export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().expressing(t).express()
 
 export class TraitBuilder {
-  private readonly superclass: Function;
+  private cls: Function
 
   constructor (superclass?: Function) {
-    this.superclass = superclass || class {}
+    this.cls = superclass || class {}
   }
 
-  /**
-   * Applies `traits` in order to the superclass given to `superclass()`.
-   *
-   * @param {TraitFunction[]} traits
-   * @return {Function} a subclass of `superclass` expressing `traits`
-   */
-  expressing (...traits) {
-    return traits.reduce((it, t) => t(it), this.superclass)
+  expressing <A, B extends A> (trait: TraitFunction<A,B>) {
+    this.cls = trait(this.cls as Constructor<A>)
+    return this
+  }
+
+  express () {
+    return this.cls
   }
 }
