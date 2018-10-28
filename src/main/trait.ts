@@ -5,11 +5,13 @@ const _wrappedTrait = Symbol('_wrappedTrait')
 
 const _cachedApplications = Symbol('_cachedApplications')
 
-type Constructor<T> = {
+type Constructor<T> = Function & {
   // 'new' can be called on a constructor to produce a T.
   new(...args: any[]): T;
+}
 
-  [_cachedApplications]: Map<TraitFunction<any, any>, Constructor<any>>;
+type CachedApplication<T> = Constructor<T> & {
+  [_cachedApplications]?: Map<TraitFunction<any, any>, Constructor<any>>
 }
 
 /**
@@ -164,9 +166,9 @@ export const Cached = <A, B extends A>(trait: TraitFunction<A, B>) => wrap(trait
   // applicationRefs if it has had N traits applied to it. A trait will have
   // exactly one _cachedApplicationRef used to store its applications.
 
-  let cachedApplications = superclass[_cachedApplications]
+  let cachedApplications = (superclass as CachedApplication<A>)[_cachedApplications]
   if (!cachedApplications) {
-    cachedApplications = superclass[_cachedApplications] = new Map()
+    cachedApplications = (superclass as CachedApplication<A>)[_cachedApplications] = new Map()
   }
 
   let application: Constructor<B> | undefined = cachedApplications.get(trait)
@@ -252,7 +254,7 @@ export const Trait = <A, B extends A>(trait: TraitFunction<A, B>) => HasInstance
  * @param {Function} [superclass=(class {})]
  * @return {TraitBuilder}
  */
-export const superclass = (superclass?: Function) => new TraitBuilder(superclass)
+export const superclass = <A>(superclass?: Constructor<A>) => new TraitBuilder(superclass)
 
 /**
  * A convenient syntactical shortcut to handle the case when a class extends
@@ -266,7 +268,7 @@ export const superclass = (superclass?: Function) => new TraitBuilder(superclass
  * @param ts {TraitFunction} the trait that should be expressed
  * @returns {Function}
  */
-export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().expressing(t).express()
+export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass(class {} as Constructor<A>).expressing(t).express()
 
 /**
  * A convenient syntactical shortcut to handle the case when a class extends
@@ -280,18 +282,17 @@ export const trait = <A, B extends A>(t: TraitFunction<A,B>) => superclass().exp
  * @param ts {TraitFunction} the trait that should be expressed
  * @returns {Function}
  */
-export const expressionOf = <A, B extends A>(t: TraitFunction<A,B>) => superclass().expressing(t)
+export const expressionOf = <A, B extends A>(t: TraitFunction<A,B>) => superclass(class {} as Constructor<A>).expressing(t)
 
-export class TraitBuilder {
-  private cls: Function
+export class TraitBuilder<A, B extends A> {
+  private cls: Constructor<A>
 
-  constructor (superclass?: Function) {
-    this.cls = superclass || class {}
+  constructor (superclass?: Constructor<A>) {
+    this.cls = superclass || (class {} as Constructor<A>)
   }
 
-  expressing <A, B extends A> (trait: TraitFunction<A,B>) {
-    this.cls = trait(this.cls as Constructor<A>)
-    return this
+  expressing <C extends B> (trait: TraitFunction<A,B>): TraitBuilder<B,C> {
+    return new TraitBuilder(trait(this.cls))
   }
 
   express () {
